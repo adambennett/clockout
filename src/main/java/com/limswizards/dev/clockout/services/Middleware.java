@@ -23,4 +23,6 @@ public class Middleware {
 
     public Optional<User> getUser(String username) { return this.users.findDistinctByUsername(username); }
 
+    public User updateUser(User user) { return this.users.save(user); }
+
 }

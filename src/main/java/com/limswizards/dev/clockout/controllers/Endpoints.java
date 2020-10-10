@@ -55,4 +55,50 @@ public class Endpoints {
         return new ResponseEntity<>("Username already taken!", HttpStatus.FOUND);
     }
 
+    @PostMapping("/updateUserTime")
+    @CrossOrigin(origins = {"https://nmi-clockout.herokuapp.com", "http://localhost:4200"})
+    public ResponseEntity<?> updateUserTime(@RequestBody LinkedHashMap<String, ?> request) {
+        String username = null;
+        VacationTime newTimeData = new VacationTime();
+        boolean setTimeData = false;
+        for (Map.Entry<String, ?> entry : request.entrySet()) {
+            switch (entry.getKey()) {
+                case "time" -> {
+                    LinkedHashMap<String, ?> newTime = (LinkedHashMap<String, ?>) entry.getValue();
+                    for (Map.Entry<String, ?> innerEntry : newTime.entrySet()) {
+                        switch (innerEntry.getKey()) {
+                            case "vacation" -> {
+                                newTimeData.setVacation((Integer) innerEntry.getValue());
+                                setTimeData = true;
+                            }
+                            case "personal" -> {
+                                newTimeData.setPersonal((Integer) innerEntry.getValue());
+                                setTimeData = true;
+                            }
+                            case "floating" -> {
+                                newTimeData.setFloating((Integer) innerEntry.getValue());
+                                setTimeData = true;
+                            }
+                        }
+                    }
+                }
+                case "username" -> username = entry.getValue().toString();
+            }
+        }
+        if (username != null && !username.equals("") && setTimeData) {
+            Optional<User> user = service.getUser(username);
+            if (user.isPresent()) {
+                User dbUser = user.get();
+                VacationTime oldTimeData = dbUser.getTime();
+                oldTimeData.setPersonal(newTimeData.getPersonal());
+                oldTimeData.setVacation(newTimeData.getVacation());
+                oldTimeData.setFloating(newTimeData.getFloating());
+                oldTimeData.setUsername(username);
+                User newUser = service.updateUser(dbUser);
+                return new ResponseEntity<>(newUser, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("Could not find username, or for some reason the updated time data sent was corrupted somehow.", HttpStatus.NOT_FOUND);
+    }
+
 }

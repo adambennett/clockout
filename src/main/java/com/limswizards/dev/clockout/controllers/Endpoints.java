@@ -108,15 +108,42 @@ public class Endpoints {
                     for (Map.Entry<String, ?> innerEntry : newTime.entrySet()) {
                         switch (innerEntry.getKey()) {
                             case "vacation" -> {
-                                newTimeData.setVacation((Integer) innerEntry.getValue());
+                                try {
+                                    newTimeData.setVacation((Integer) innerEntry.getValue());
+                                } catch (Exception ex) {
+                                    try {
+                                        Integer integer = Integer.parseInt((String) innerEntry.getValue());
+                                        newTimeData.setVacation(integer);
+                                    } catch(Exception exc) {
+                                        return new ResponseEntity<>("Input was not an integer!", HttpStatus.BAD_REQUEST);
+                                    }
+                                }
                                 setTimeData = true;
                             }
                             case "personal" -> {
-                                newTimeData.setPersonal((Integer) innerEntry.getValue());
+                                try {
+                                    newTimeData.setPersonal((Integer) innerEntry.getValue());
+                                } catch (Exception ex) {
+                                    try {
+                                        Integer integer = Integer.parseInt((String) innerEntry.getValue());
+                                        newTimeData.setPersonal(integer);
+                                    } catch(Exception exc) {
+                                        return new ResponseEntity<>("Input was not an integer!", HttpStatus.BAD_REQUEST);
+                                    }
+                                }
                                 setTimeData = true;
                             }
                             case "floating" -> {
-                                newTimeData.setFloating((Integer) innerEntry.getValue());
+                                try {
+                                    newTimeData.setFloating((Integer) innerEntry.getValue());
+                                } catch (Exception ex) {
+                                    try {
+                                        Integer integer = Integer.parseInt((String) innerEntry.getValue());
+                                        newTimeData.setFloating(integer);
+                                    } catch(Exception exc) {
+                                        return new ResponseEntity<>("Input was not an integer!", HttpStatus.BAD_REQUEST);
+                                    }
+                                }
                                 setTimeData = true;
                             }
                         }
